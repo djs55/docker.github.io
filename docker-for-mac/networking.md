@@ -119,6 +119,28 @@ $ docker run -d -P --name webserver nginx
 See the [run command](/engine/reference/commandline/run.md) for more details on
 publish options used with `docker run`.
 
+#### I have an IP address clash
+
+By default Docker for Mac uses the IP network `192.168.65.0/24` for internal
+communication between the Docker daemon and the host. If this clashes with a
+network that you're already using then you can change the Docker for Mac setting
+by executing the following commands in a terminal on the host:
+(replace 10.0.0.1, 10.0.0.2 and 10.0.0.254 with IP addresses which are free
+in your local environment)
+```
+cd ~/Library/Containers/com.docker.docker/Data/database/
+git checkout master
+mkdir -p com.docker.driver.amd64-linux/slirp
+echo 10.0.0.1 > com.docker.driver.amd64-linux/slirp/docker
+echo 10.0.0.2 > com.docker.driver.amd64-linux/slirp/host
+echo 10.0.0.254 > com.docker.driver.amd64-linux/slirp/highest-ip
+git add com.docker.driver.amd64-linux/slirp/docker
+git add com.docker.driver.amd64-linux/slirp/host
+git add com.docker.driver.amd64-linux/slirp/highest-ip
+git commit -s -m 'Change IP address range used by Docker'
+```
+Docker for Mac should automatically restart.
+
 #### A view into implementation
 
 We understand that these workarounds are not ideal, but there are several
